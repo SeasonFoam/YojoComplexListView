@@ -1,0 +1,135 @@
+//
+//  ComplexObject.m
+//  StoreAideTool
+//
+//  Created by Yojo on 17/7/3.
+//  Copyright © 2017年 Yojo All rights reserved.
+//
+
+#import "ComplexObject.h"
+
+@implementation ComplexObject
+
+- (void)dealloc
+{
+    _text = nil;
+    self.attributeText = nil;
+}
+
+- (id)init
+{
+    self = [super init];
+    if(self)
+    {
+        self.fontSize = 12;
+        self.text = @"-";
+        self.textColor = Black_Three;
+        self.textAlignment = NSTextAlignmentCenter;
+        self.backColor = WhiteSmoke;
+        self.itemWidth = 30.0f;
+        self.itemHeight = 60.0f;
+        self.hasSquare = YES;
+    }
+    return self;
+}
+
+- (void)setText:(NSString *)text
+{
+    _text = text == nil ? @"-" : text;//[StringHelper isBlankString:text] ? @"-" : text;
+}
+
+- (id)copyWithZone:(NSZone *)zone
+{
+    ComplexObject *copy = [[ComplexObject allocWithZone:zone] init];
+    copy.text = self.text;
+    copy.textAlignment = self.textAlignment;
+    copy.textColor = self.textColor;
+    copy.fontSize = self.fontSize;
+    copy.backColor = self.backColor;
+    copy.itemHeight = self.itemHeight;
+    copy.itemWidth = self.itemWidth;
+    copy.hasSquare = self.hasSquare;
+    
+    return copy;
+}
+
+@end
+
+@implementation ComplexSubItemObject
+
+- (void)dealloc
+{
+    self.Items = nil;
+}
+
+- (id)init
+{
+    self = [super init];
+    if(self)
+    {
+        _itemHeight = 0.0f;
+        _Items = [NSMutableArray array];
+    }
+    return self;
+}
+
+- (void)setItems:(NSMutableArray<ComplexObject *> *)Items
+{
+    _Items = Items;
+    
+    for(ComplexObject *obj in Items)
+    {
+        _itemHeight += obj.itemHeight;
+    }
+}
+
+- (void)addItemsObject:(ComplexObject *)itemObject
+{
+    [_Items addObject:itemObject];
+    
+    _itemHeight += itemObject.itemHeight;
+}
+
+- (void)removeAllObjects
+{
+    [_Items removeAllObjects];
+}
+
+@end
+
+@implementation ComplexItemObject
+
+- (void)dealloc
+{
+    self.SubItems = nil;
+}
+
+- (id)init
+{
+    self = [super init];
+    if(self)
+    {
+        self.itemHeight = 0.0f;
+        _SubItems = [NSMutableArray array];
+    }
+    return self;
+}
+
+- (void)setSubItems:(NSMutableArray<ComplexSubItemObject *> *)SubItems
+{
+    _SubItems = SubItems;
+    
+    for(ComplexSubItemObject *obj in SubItems)
+    {
+        _itemHeight = MAX(_itemHeight, obj.itemHeight);
+    }
+}
+
+- (void)addItemObject:(ComplexSubItemObject *)subItem
+{
+    [_SubItems addObject:subItem];
+    
+    _itemHeight = MAX(_itemHeight, subItem.itemHeight);
+}
+
+@end

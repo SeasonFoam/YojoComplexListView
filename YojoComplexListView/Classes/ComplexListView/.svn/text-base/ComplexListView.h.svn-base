@@ -1,0 +1,31 @@
+//
+//  ComplexListView.h
+//  StoreAideTool
+//
+//  Created by Yojo on 17/7/3.
+//  Copyright © 2017年 Yojo All rights reserved.
+//
+
+#import "ComplexObject.h"
+
+typedef void(^CheckMore)();
+
+@interface ComplexListView : UIView
+
+@property (nonatomic, assign) CGFloat headerHeight;
+
+@property (nonatomic, copy) NSArray<ComplexObject *> *HeaderItems;
+@property (nonatomic, copy) NSArray<ComplexItemObject *> *Items;
+
+@property (nonatomic, assign) NSInteger numOfLines;
+@property (nonatomic, assign, readonly) CGFloat contentHeight;
+@property (nonatomic, assign) BOOL isShowLock;
+@property (nonatomic, assign) BOOL hasSquare;
+
+@property (nonatomic, copy) CheckMore block_checkmore;
+
+@property (nonatomic, copy) NSString *checkMoreText;
+
+- (void)clearItems;
+
+@end

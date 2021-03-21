@@ -7,12 +7,21 @@
 //
 
 #import "YOJOAppDelegate.h"
+#import "YOJOViewController.h"
 
 @implementation YOJOAppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    // Override point for customization after application launch.
+    self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
+    self.window.tintColor = [UIColor blackColor];
+    self.window.backgroundColor = [UIColor whiteColor];
+    
+    YOJOViewController *view = [[YOJOViewController alloc] init];
+    self.window.rootViewController = view;
+    
+    [self.window makeKeyAndVisible];
+    
     return YES;
 }
 

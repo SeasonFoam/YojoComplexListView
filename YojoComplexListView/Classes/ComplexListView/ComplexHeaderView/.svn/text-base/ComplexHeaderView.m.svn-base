@@ -1,0 +1,93 @@
+//
+//  ComplexHeaderView.m
+//  StoreAideTool
+//
+//  Created by Yojo on 17/7/3.
+//  Copyright © 2017年 Yojo All rights reserved.
+//
+
+#import "ComplexHeaderView.h"
+#import "ComplexObject.h"
+
+@interface ComplexHeaderView ()
+
+@end
+
+@implementation ComplexHeaderView
+
+- (void)dealloc
+{
+    self.HeaderItems = nil;
+}
+
+- (id)initWithFrame:(CGRect)frame
+{
+    self = [super initWithFrame:frame];
+    if(self)
+    {
+        self.backgroundColor = [UIColor whiteColor];
+    }
+    return self;
+}
+
+#pragma -mark
+#pragma -mark Attribute
+- (void)setHeaderHeight:(CGFloat)headerHeight
+{
+    _headerHeight = headerHeight;
+    
+    for(id tempView in self.subviews)
+    {
+        if([tempView isKindOfClass:[UILabel class]])
+        {
+            UILabel *lb_item = tempView;
+            CGRectSetHeight(lb_item, headerHeight);
+        }
+    }
+}
+
+- (void)setHeaderItems:(NSArray<ComplexObject *> *)HeaderItems
+{
+    _HeaderItems = HeaderItems;
+    
+    if(HeaderItems != nil)
+    {
+        [self refreshUI];
+    }
+}
+
+#pragma -mark
+#pragma -mark Attribute
+- (void)refreshUI
+{
+    for(id tempView in self.subviews)
+    {
+        [tempView removeFromSuperview];
+    }
+    
+    CGFloat xPos = 0;
+    for(ComplexObject *obj in self.HeaderItems)
+    {
+        UILabel *lb_header = [[UILabel alloc] initWithFrame:CGRectMake(xPos,
+                                                                       0,
+                                                                       obj.itemWidth,
+                                                                       self.headerHeight)];
+        lb_header.frame = CGRectIntegral(lb_header.frame);
+        if([StringHelper isBlankString:obj.text])
+            lb_header.attributedText = obj.attributeText;
+        else
+            lb_header.text = obj.text;
+        lb_header.textAlignment = obj.textAlignment;
+        lb_header.textColor = obj.textColor;
+        lb_header.font = [UIFont systemFontOfSize:obj.fontSize];
+        lb_header.backgroundColor = obj.backColor;
+        lb_header.layer.borderWidth = obj.hasSquare ? 0.3f : 0.0f;
+        lb_header.layer.borderColor = [[[UIColor lightGrayColor] colorWithAlphaComponent:0.5f] CGColor];
+        lb_header.adjustsFontSizeToFitWidth = YES;
+        [self addSubview:lb_header];
+        
+        xPos = CGRectGetMaxX(lb_header.frame);
+    }
+}
+
+@end

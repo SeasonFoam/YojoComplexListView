@@ -1,0 +1,27 @@
+PODS:
+  - FBSnapshotTestCase (2.1.4):
+    - FBSnapshotTestCase/SwiftSupport (= 2.1.4)
+  - FBSnapshotTestCase/Core (2.1.4)
+  - FBSnapshotTestCase/SwiftSupport (2.1.4):
+    - FBSnapshotTestCase/Core
+  - YojoComplexListView (0.1.0)
+
+DEPENDENCIES:
+  - FBSnapshotTestCase
+  - YojoComplexListView (from `../`)
+
+SPEC REPOS:
+  trunk:
+    - FBSnapshotTestCase
+
+EXTERNAL SOURCES:
+  YojoComplexListView:
+    :path: "../"
+
+SPEC CHECKSUMS:
+  FBSnapshotTestCase: 094f9f314decbabe373b87cc339bea235a63e07a
+  YojoComplexListView: 9594cb870d319cc625ee518715d227f8b6b2a383
+
+PODFILE CHECKSUM: 1b988bb047ce3d3a657d8276c1d40cec5394a025
+
+COCOAPODS: 1.9.0.beta.2

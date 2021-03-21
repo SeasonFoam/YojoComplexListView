@@ -1,0 +1,215 @@
+//
+//  ComplexListView.m
+//  StoreAideTool
+//
+//  Created by Yojo on 17/7/3.
+//  Copyright © 2017年 Yojo All rights reserved.
+//
+
+#import "ComplexListView.h"
+#import "ComplexHeaderView.h"
+#import "ComplexItemsView.h"
+#import "MLImageButton.h"
+
+@interface ComplexListView ()
+
+@property (nonatomic, weak) ComplexHeaderView *headerView;
+@property (nonatomic, weak) ComplexItemsView *itemsView;
+
+@property (nonatomic, weak) UIButton *btn_submit;
+
+@property (nonatomic, weak) MLImageButton *btn_lock;
+
+@end
+
+@implementation ComplexListView
+
+- (void)dealloc
+{
+    self.headerView = nil;
+    self.itemsView = nil;
+    
+    self.HeaderItems = nil;
+    self.Items = nil;
+    self.btn_submit = nil;
+    self.btn_lock = nil;
+    
+    self.block_checkmore = nil;
+    self.checkMoreText = nil;
+}
+
+- (id)initWithFrame:(CGRect)frame
+{
+    self = [super initWithFrame:frame];
+    if(self)
+    {
+        _isShowLock = NO;
+        _numOfLines = 0;
+        _contentHeight = 0.0f;
+        _headerHeight = 20.0f;
+        _hasSquare = NO;
+        
+        self.clipsToBounds = YES;
+        self.backgroundColor = [UIColor whiteColor];
+        self.layer.borderWidth = self.hasSquare ? 0.3f : 0.0f;
+        self.layer.borderColor = [[[UIColor lightGrayColor] colorWithAlphaComponent:0.5f] CGColor];
+        
+        ComplexHeaderView *headerView = [[ComplexHeaderView alloc] initWithFrame:CGRectMake(0,
+                                                                                            0,
+                                                                                            CGRectGetWidth(frame),
+                                                                                            self.headerHeight)];
+        [self addSubview:headerView];
+        self.headerView = headerView;
+        
+        ComplexItemsView *itemsView = [[ComplexItemsView alloc] initWithFrame:CGRectMake(0,
+                                                                                         CGRectGetMaxY(headerView.frame),
+                                                                                         CGRectGetWidth(frame),
+                                                                                         CGRectGetHeight(frame) - self.headerHeight - 30)];
+        [self addSubview:itemsView];
+        self.itemsView = itemsView;
+        
+        UIButton *btn_submit = [[UIButton alloc] initWithFrame:CGRectMake(0,
+                                                                          CGRectGetMaxY(itemsView.frame),
+                                                                          CGRectGetWidth(frame),
+                                                                          30)];
+        [btn_submit setTitle:@"查看更多 >" forState:UIControlStateNormal];
+        [btn_submit setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+        [btn_submit.titleLabel setFont:[UIFont systemFontOfSize:12.0f]];
+        btn_submit.backgroundColor = [UIColor whiteColor];
+        btn_submit.layer.borderWidth = self.hasSquare ? 0.3f : 0.0f;
+        btn_submit.layer.borderColor = [[[UIColor lightGrayColor] colorWithAlphaComponent:0.5f] CGColor];
+        btn_submit.hidden = YES;
+        [btn_submit addTarget:self action:@selector(submitButtonTouchUpInside:) forControlEvents:UIControlEventTouchUpInside];
+        [self addSubview:btn_submit];
+        self.btn_submit = btn_submit;
+        
+        MLImageButton *btn_lock = [[MLImageButton alloc] initWithFrame:CGRectMake(0,
+                                                                                  CGRectGetMaxY(itemsView.frame),
+                                                                                  CGRectGetWidth(frame),
+                                                                                  50)];
+        btn_lock.title = @"开赛后公开";
+        btn_lock.textAlignment = NSTextAlignmentCenter;
+        btn_lock.textColor = [UIColor colorWithHexCode:@"#666666"].CGColor;
+        btn_lock.fontSize = 13.0f;
+        btn_lock.spaceWhite = 5.0f;
+        btn_lock.tagImgName = @"JCGodPlan_lock";
+        //btn_lock.tagFrame = CGRectMake(0, 0, 20, 16);
+        btn_lock.layer.borderWidth = self.hasSquare ? 0.3f : 0.0f;
+        btn_lock.layer.borderColor = self.layer.borderColor;
+        btn_lock.hidden = YES;
+        [self addSubview:btn_lock];
+        self.btn_lock = btn_lock;
+    }
+    return self;
+}
+
+#pragma -mark
+#pragma -mark Attribute
+- (void)setHeaderHeight:(CGFloat)headerHeight
+{
+    _headerHeight = headerHeight;
+    
+    self.headerView.headerHeight = headerHeight;
+    CGRectSetHeight(self.headerView, headerHeight);
+    CGRectSetMinY(self.itemsView, CGRectGetMaxY(self.headerView.frame));
+    CGRectSetHeight(self.itemsView, CGRectGetHeight(self.frame) - headerHeight);
+    
+    _contentHeight = self.itemsView.contentHeight + self.headerHeight;
+    
+    if(_contentHeight > 0)
+        CGRectSetHeight(self, self.contentHeight);
+}
+
+- (void)setHeaderItems:(NSMutableArray<ComplexObject *> *)HeaderItems
+{
+    _HeaderItems = HeaderItems;
+    
+    self.headerView.HeaderItems = HeaderItems;
+    self.itemsView.HeaderItems = HeaderItems;
+}
+
+- (void)setItems:(NSMutableArray<ComplexItemObject *> *)Items
+{
+    _Items = Items;
+    
+    self.itemsView.Items = Items;
+    
+    BOOL scaleList = (self.numOfLines != 0 && self.Items.count > self.numOfLines);
+    self.btn_submit.hidden = !scaleList;
+    
+    if(scaleList)
+    {
+        CGRectSetMinY(self.btn_submit, CGRectGetMaxY(self.itemsView.frame));
+        _contentHeight = CGRectGetMaxY(self.btn_submit.frame);
+    }
+    else
+        _contentHeight = CGRectGetMaxY(self.itemsView.frame);
+    
+    if(_contentHeight > 0)
+        CGRectSetHeight(self, self.contentHeight);
+}
+
+- (void)setNumOfLines:(NSInteger)numOfLines
+{
+    _numOfLines = numOfLines;
+    
+    self.itemsView.numOfLines = numOfLines;
+}
+
+- (void)setIsShowLock:(BOOL)isShowLock
+{
+    _isShowLock = isShowLock;
+    
+    if(isShowLock)
+    {
+        self.btn_lock.hidden = NO;
+        self.itemsView.hidden = YES;
+        self.headerView.layer.borderColor = self.layer.borderColor;
+        if(self.hasSquare)
+            self.headerView.layer.borderWidth = 0.4f;
+        else
+            self.headerView.layer.borderWidth = 0.0f;
+        
+        CGRectSetMinY(self.btn_lock, CGRectGetMaxY(self.headerView.frame)/* + (self.Items.count > 0 ? 5 : 0)*/);
+        
+        CGRectSetHeight(self, CGRectGetMaxY(self.btn_lock.frame));
+        _contentHeight = CGRectGetHeight(self.frame);
+    }
+    else
+    {
+        self.btn_lock.hidden = YES;
+        self.itemsView.hidden = NO;
+    }
+}
+
+- (void)setCheckMoreText:(NSString *)checkMoreText
+{
+    _checkMoreText = checkMoreText;
+    
+    [self.btn_submit setTitle:checkMoreText forState:UIControlStateNormal];
+}
+
+- (void)setHasSquare:(BOOL)hasSquare
+{
+    _hasSquare = hasSquare;
+    
+    self.btn_submit.layer.borderWidth = hasSquare ? 0.3f : 0.0f;
+    self.btn_lock.layer.borderWidth = hasSquare ? 0.3f : 0.0f;
+}
+
+#pragma -mark
+#pragma -mark Custom Function
+- (void)clearItems
+{
+    self.Items = nil;
+}
+
+#pragma -mark
+#pragma -mark UIButton Events
+- (void)submitButtonTouchUpInside:(UIButton *)btn
+{
+    if(self.block_checkmore)
+        self.block_checkmore();
+}
+
+@end

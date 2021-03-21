@@ -1,0 +1,21 @@
+//
+//  ComplexItemsView.h
+//  StoreAideTool
+//
+//  Created by Yojo on 17/7/3.
+//  Copyright © 2017年 Yojo All rights reserved.
+//
+
+#import <Foundation/Foundation.h>
+
+@class ComplexObject, ComplexItemObject;
+@interface ComplexItemsView : UIView
+
+@property (nonatomic, retain) NSArray<ComplexObject *> *HeaderItems;
+
+@property (nonatomic, retain) NSArray<ComplexItemObject *> *Items;
+
+@property (nonatomic, assign, readonly) CGFloat contentHeight;
+@property (nonatomic, assign) NSInteger numOfLines;
+
+@end

@@ -1,0 +1,16 @@
+//
+//  ComplexHeaderView.h
+//  StoreAideTool
+//
+//  Created by Yojo on 17/7/3.
+//  Copyright © 2017年 Yojo All rights reserved.
+//
+
+@class ComplexObject;
+@interface ComplexHeaderView : UIView
+
+@property (nonatomic, assign) CGFloat headerHeight;
+
+@property (nonatomic, retain) NSArray<ComplexObject *> *HeaderItems;
+
+@end
