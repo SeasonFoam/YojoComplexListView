@@ -22,7 +22,7 @@ pod 'YojoComplexListView'
 
 ## Author
 
-yonghendeworld@163.com, yonghendeworld@163.com
+SeasonFoam, yonghendeworld@163.com
 
 ## License
 
